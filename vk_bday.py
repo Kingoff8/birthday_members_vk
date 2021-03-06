@@ -1,12 +1,35 @@
 # -*- coding: utf-8 -*-
-import requests
+import os
 from time import sleep
 import datetime
 import re
 import random
 import json
+
+import requests
 from pprint import pprint
 import vk_tokens as vk
+
+# определение путей в зависимости от расположения скрипта
+
+where_i = os.popen('hostname').read()
+where_i.encode('utf-8')
+
+print(where_i)
+
+
+if 'hostland' in where_i:
+    
+    # путь к рабочей папке на хостинге
+    path_folder = '/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/'
+
+else:
+
+    # путь к рабочей папке на локалке
+    path_folder = '/home/mint/projects/birthday_members_vk/'
+    
+print(path_folder)
+
 
 # импорт токенов vk
 token = vk.token
@@ -16,7 +39,7 @@ V = vk.V
 
 # функция удаляет последний пост с поздравлением
 def del_last_post(): 
-    post_id = json.load(open('/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/last_post_id.json'))
+    post_id = json.load(open(path_folder + 'last_post_id.json'))
     print(post_id)
     #post_id = json.load(open('last_post_id.json'))
     r = requests.get('https://api.vk.com/method/wall.delete',
@@ -127,7 +150,8 @@ def send_post(list_bday, text):
     data = r.json()
     
     
-    random_img = ['/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/bday_image/image2.jpg', '/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/bday_image/image3.jpg', '/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/bday_image/image4.jpg', '/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/bday_image/image0.jpg', '/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/bday_image/image1.jpg']
+    random_img = [path_folder + 'bday_image/image2.jpg', path_folder + 'bday_image/image3.jpg', path_folder + 'bday_image/image4.jpg',
+                  path_folder + 'bday_image/image0.jpg', path_folder + 'bday_image/image1.jpg']
     random_img = random.choice(random_img)
     
     server = requests.post(data['response']['upload_url'], files={'photo': open(random_img, "rb")})
@@ -166,7 +190,7 @@ def save_post_id(post_id):
     print('пост айди', post_id)
     post_id = post_id['response']['post_id']
 
-    with open('/home/host1336571/parser-yo.ga/htdocs/www/yoga/bot/bday_vk/last_post_id.json', 'w') as f:
+    with open(path_folder + 'last_post_id.json', 'w') as f:
     #with open('last_post_id.json', 'w') as f:
         json.dump(post_id, f, indent=2)
         pass
